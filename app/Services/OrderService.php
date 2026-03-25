@@ -125,7 +125,7 @@ class OrderService
             return $order->load(['warehouse', 'items.product']);
         });
     } 
-    
+
     private function generateOrderNo(): string
     {
         $date     = now()->format('Ymd');

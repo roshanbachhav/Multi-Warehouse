@@ -66,3 +66,9 @@ A professional, high-performance Inventory Management System built with **Larave
 ## 📄 Documentation Assets
 - **Postman Collection:** [postman_collection.json](file:///d:/Job%20Projects/inventory-system/postman_collection.json)
 - **Architecture Details:** See `app/Services` and `app/Listeners`.
+
+---
+
+## 👤 Author
+**Developed by Roshan Bachhav**
+*Passionate about building scalable, secure, and high-performance Laravel applications.*
