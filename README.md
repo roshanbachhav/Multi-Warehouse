@@ -1,66 +1,68 @@
-# Multi-Warehouse Inventory & Order Processing System
+# Multi-Warehouse Inventory & Order Processing System (Laravel 11)
 
-A complete Laravel 11 API-based system for managing inventory across multiple warehouses with order processing, status tracking, and reporting.
+A professional, high-performance Inventory Management System built with **Laravel 11**. This project demonstrates advanced backend architecture, including role-based authentication, event-driven stock management, and optimized reporting.
 
-## Features
-- **Authentication**: JWT-based auth using Laravel Sanctum (Admin & Manager roles).
-- **Product Management**: SKU/Slug auto-generation, soft deletes, caching.
-- **Warehouse Management**: Track stock levels across multiple locations.
-- **Stock Control**: Pessimistic locking to prevent race conditions during order fulfillment.
-- **Order Processing**: Transactional order creation, confirmation, and cancellation.
-- **Event-Driven Architecture**: Stock deduction triggered by `OrderConfirmed` events.
-- **Reporting**: Optimized JOIN queries for stock summary and sales reports.
+---
 
-## Setup Instructions
+## 🛠️ Key Technical Highlights (Interview Ready)
 
-1. **Clone the repository** (if applicable) or navigate to the project folder.
-2. **Install Dependencies**:
-   ```bash
-   composer install
-   ```
-3. **Configure Environment**:
-   ```bash
-   cp .env.example .env
-   # Update DB_DATABASE, DB_USERNAME, DB_PASSWORD in .env
-   ```
-4. **Generate App Key**:
-   ```bash
-   php artisan key:generate
-   ```
-5. **Run Migrations & Seed**:
-   ```bash
-   php artisan migrate:fresh --seed
-   ```
-6. **Cache Configuration**:
-   ```bash
-   php artisan config:cache
-   php artisan route:cache
-   ```
+### 1. Robust Authentication (Laravel Sanctum)
+- **Role-Based Access Control (RBAC):** Implemented custom middleware (`CheckAdmin`, `CheckManager`) to secure API endpoints.
+- **Token Management:** Uses Sanctum to issue secure API tokens for mobile or frontend consumers. 
+- **User Roles:**
+    - `Admin`: Full access to Products, Warehouses, Orders, and Reports.
+    - `Manager`: Access to create Orders and view Reports.
 
-## API Documentation
+### 2. Clean Architecture Pattern
+- **Service Layer:** All business logic is kept in `app/Services`, making the code testable and reusable.
+- **Repository Pattern:** Separates database queries from business logic for better maintainability.
+- **API Resources:** Standardized JSON responses for consistent frontend integration.
 
-### Authentication
-- `POST /api/login`: Authenticate and receive a token.
-  - Body: `{"email": "admin@example.com", "password": "password"}`
+### 3. Advanced Stock Integrity (Architecture Check)
+- **Pessimistic Locking:** Uses `lockForUpdate()` during stock deduction to prevent "Race Conditions" (where two orders might accidentally sell the same last item).
+- **Event-Driven Deduction:** Implemented an `OrderConfirmed` **Event** and a **Listener**. Stock is only deducted when the event fires, ensuring the fulfillment process is decoupled and reliable.
 
-### Products
-- `GET /api/products`: List products (Paginated, filters: `status`, `category`, `search`).
-- `POST /api/products`: Create product (Admin only).
-- `GET /api/products/{id}`: View product details.
-- `PUT /api/products/{id}`: Update product (Admin only).
-- `DELETE /api/products/{id}`: Delete product (Admin only).
+### 4. Optimized Reporting & Aggregation
+- **Stock Summary:** Efficient SQL `JOIN` queries calculate *Opening Stock*, *Sold Quantity*, and *Current Stock* in a single pass.
+- **Sales Analytics:** Aggregated reports for "Date-wise Sales" and "Top 5 Selling Products" using high-performance Eloquent/DB grouping.
+- **Caching:** Implemented caching for reports to reduce database load.
 
-### Orders
-- `GET /api/orders`: List orders (Paginated, filters: `status`, `date_from`, `date_to`).
-- `POST /api/orders`: Create a new order (Manager/Admin).
-- `GET /api/orders/{id}`: View order details with items.
-- `PUT /api/orders/{id}/confirm`: Confirm order and deduct stock (Admin only).
-- `PUT /api/orders/{id}/cancel`: Cancel order and restore stock (Admin only).
+---
 
-### Reports
-- `GET /api/reports/stock-summary`: Summary of stock levels across warehouses.
-- `GET /api/reports/sales`: Sales totals and top 5 selling products.
+## 🚀 Modules & Features Included
 
-## Default Credentials
-- **Admin**: admin@example.com / password
-- **Manager**: manager@example.com / password
+- **Product Module:** Auto-generates unique SKUs and SEO-friendly slugs. Includes "Soft Deletes" to prevent data loss.
+- **Stock Module:** Handles multi-warehouse quantity tracking.
+- **Order Module:** Managed within **Database Transactions**. If any part of the order creation fails, the entire process rolls back, ensuring no partial/broken data.
+- **Event Module:** Handles triggered actions (like stock deduction) outside the main order lifecycle.
+
+---
+
+## 🛠️ Step-by-Step Implementation Flow
+
+1.  **Project Initialization:** Set up Laravel 11 with a clean MySQL environment.
+2.  **Database Design:** Created 6 migrations with proper foreign keys, unique constraints, and indexes for speed.
+3.  **Authentication Setup:** Configured Sanctum and built the `AuthController` with Login/Logout functionality.
+4.  **Service Development:**
+    - `ProductService`: Logic for SKUs/Slugs/Cache.
+    - `StockService`: Logic for checking/deducting/restoring stock.
+    - `OrderService`: The core transactional engine for the $1 million logic (Orders).
+5.  **Event Integration:** Registered the `OrderConfirmed` event-listener mapping.
+6.  **Reporting:** Built the `ReportService` with optimized SQL aggregation.
+7.  **Final Verification:** Seeded the database with sample data and verified all flows using a comprehensive Postman collection.
+
+---
+
+## 🚦 How to Setup
+
+1.  **Install dependencies:** `composer install`
+2.  **Env Setup:** `cp .env.example .env` (Update DB credentials)
+3.  **Migration & Seeding:** `php artisan migrate:fresh --seed`
+4.  **Routes/Config Cache:** `php artisan config:cache && php artisan route:cache`
+5.  **Run Server:** `php artisan serve`
+
+---
+
+## 📄 Documentation Assets
+- **Postman Collection:** [postman_collection.json](file:///d:/Job%20Projects/inventory-system/postman_collection.json)
+- **Architecture Details:** See `app/Services` and `app/Listeners`.
